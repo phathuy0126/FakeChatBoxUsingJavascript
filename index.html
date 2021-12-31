@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake comment using javascript</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            padding: 0 5%;
+        }
+
+        .login {
+            background-color: blanchedalmond;
+            padding: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: all .5s ease;
+        }
+
+        .login button {
+            margin: 5px;
+        }
+
+        .BoxMessages {
+            overflow: hidden;
+        }
+
+        input,
+        .gui {
+            border: 1px solid;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login">
+        <h2>Vui lòng chọn số thứ tự</h2>
+        <div><button class="mot">1</button><span>Phát Huy</span></div>
+        <div><button class="hai">2</button><span>Văn Hào</span></div>
+        <div><button class="ba">3</button><span>Thái Sơn</span></div>
+        <div><button class="bon">4</button><span>Duy Linh</span></div>
+        <div><button class="nam">5</button><span>Đức Hùng</span></div>
+    </div>
+    <div class="container">
+        <button class="btn_login">Đăng nhập</button>
+        <ul></ul>
+        <div class="BoxMessages">
+            <input type="text">
+            <button class="gui">Gửi</button>
+        </div>
+    </div>
+    <script>
+
+        // sự kiện        
+        var login = document.querySelector('.login');
+        var btnLogin = document.querySelector('.btn_login');
+        var IdMot = document.querySelector('.mot');
+        var IdHai = document.querySelector('.hai');
+        var IdBa = document.querySelector('.ba');
+        var IdBon = document.querySelector('.bon');
+        var IdNam = document.querySelector('.nam');
+        var message = document.querySelector('.BoxMessages');
+        var input = document.querySelector('input');
+        var gui = document.querySelector('.gui');
+        login.style.maxHeight = '0px';
+        message.style.maxHeight = '0px';
+        btnLogin.onclick = function () {
+            if (login.style.maxHeight == '0px') {
+                login.style.maxHeight = 'fit-content'
+            }
+        }
+        login.onclick = function (e) {
+            var users = [
+                {
+                    id: 1,
+                    name: 'Phát Huy',
+                },
+                {
+                    id: 2,
+                    name: 'Văn Hào',
+                },
+                {
+                    id: 3,
+                    name: 'Thái Sơn',
+                },
+                {
+                    id: 4,
+                    name: 'Duy Linh',
+                },
+                {
+                    id: 5,
+                    name: 'Đức Hùng',
+                },
+            ];
+
+
+            if (e.target.tagName == 'BUTTON') {
+                var idUser = e.target.innerText;
+                login.style.maxHeight = '1px';
+                message.style.maxHeight = 'fit-content';
+                btnLogin.innerText = `${idUser} - ${users[idUser - 1].name}`
+            }
+
+            var comments = [
+                {
+                    id: 1,
+                    userId: 1,
+                    commentContent: `xin chào ${users[idUser - 1].name} ml :))`,
+                },
+            ];
+
+            input.oninput = function () {
+                var value = this.value
+
+                gui.onclick = function () {
+                    comments.push({ id: Math.floor(idUser), userId: Math.floor(idUser), commentContent: `${value}` })                    
+                    function getComment() {
+                        return new Promise(function (resolve) {
+                            setTimeout(() => {
+                                resolve(comments)
+                            }, 200);
+                        })
+                    }
+
+                    function getUsersByIds(userIds) {
+                        return new Promise(function (resolve) {
+                            var result = users.filter(function (user) {
+                                return userIds.includes(user.id);
+                            })
+                            setTimeout(() => {
+                                resolve(result)
+                            }, 200);
+                        })
+                    }
+
+
+                    getComment()
+                        .then(function (comments) {
+                            var userIds = comments.map(function (comments) {
+                                return comments.userId;
+                            })
+                            return getUsersByIds(userIds)
+                                .then(function (users) {
+                                    return {
+                                        users: users,
+                                        comments: comments
+                                    };
+                                })
+
+                        })
+                        .then(function (data) {
+                            console.log(data)
+                            var ul = document.querySelector('ul')
+                            var html = ``
+                            data.comments.map(function (comment) {
+                                var user = data.users.find(function (user) {
+                                    return user.id === comment.userId;
+                                })
+                                console.log(user)
+                                html += `<li>${user.name} : ${comment.commentContent}</li>`
+                            })
+                            ul.innerHTML = html
+                        })                        
+                }
+
+            }
+
+
+
+            console.log(comments)
+            function getComment() {
+                return new Promise(function (resolve) {
+                    setTimeout(() => {
+                        resolve(comments)
+                    }, 200);
+                })
+            }
+
+            function getUsersByIds(userIds) {
+                return new Promise(function (resolve) {
+                    var result = users.filter(function (user) {
+                        return userIds.includes(user.id);
+                    })
+                    setTimeout(() => {
+                        resolve(result)
+                    }, 200);
+                })
+            }
+
+
+            getComment()
+                .then(function (comments) {
+                    var userIds = comments.map(function (comments) {
+                        return comments.userId;
+                    })
+                    return getUsersByIds(userIds)
+                        .then(function (users) {
+                            return {
+                                users: users,
+                                comments: comments
+                            };
+                        })
+
+                })
+                .then(function (data) {
+                    console.log(data)
+                    var ul = document.querySelector('ul')
+                    var html = ``
+                    data.comments.map(function (comment) {
+                        var user = data.users.find(function (user) {
+                            return user.id === comment.userId;
+                        })
+                        console.log(user)
+                        html += `<li>${user.name} : ${comment.commentContent}</li>`
+                    })
+                    ul.innerHTML = html
+                })
+        }
+
+
+    </script>
+</body>
+
+</html>
